@@ -108,10 +108,6 @@ public class MainActivity extends AppCompatActivity {
                             String readNumber2 = documentSnapshot.getString("person_number");
                             String readAddress2 = documentSnapshot.getString("person_address");
 
-//                            readName.setText(readName2);
-//                            readNumber.setText(readNumber2);
-//                            readAddress.setText(readAddress2);
-
                             Person p = new Person();
                             p.setName(readName2);
                             p.setNumber(readNumber2);
