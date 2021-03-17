@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "271769705133",
+    "project_id": "mcc-ass-fcee4",
+    "storage_bucket": "mcc-ass-fcee4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271769705133:android:9254d5cc9a480be31a8424",
+        "android_client_info": {
+          "package_name": "com.example.mcc_ass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271769705133-7r4agmna0n85crhunqngo2fegl349f5i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6HfQDmh380W7nCeHU2dWrk0uSOq1EF3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271769705133-7r4agmna0n85crhunqngo2fegl349f5i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
