@@ -16,11 +16,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -73,107 +76,67 @@ public class MainActivity extends AppCompatActivity {
                 user.put("person_number", personNumber);
                 user.put("person_address", personAddress);
 
-
 // Add a new document with a generated ID
-
-                ref.set(user).addOnSuccessListener(new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        Log.d("TAG", "DocumentSnapshot added with ID:");
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error adding document", e);
-
-                    }
-                });
+                db.collection("users")
+                        .add(user)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("TAG", "Error adding document", e);
+                            }
+                        });
 
             }
         });
-
 
         readDb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                ref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                db.collection("users")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
 
-                        if (documentSnapshot.exists()) {
 
-                            String readName2 = documentSnapshot.getString("person_name");
-                            String readNumber2 = documentSnapshot.getString("person_number");
-                            String readAddress2 = documentSnapshot.getString("person_address");
+                                    ArrayList<Person> persons = new ArrayList<>();
 
-                            Person p = new Person();
-                            p.setName(readName2);
-                            p.setNumber(readNumber2);
-                            p.setAddress(readAddress2);
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Person yourClass = new Person();
+                                        yourClass.setName((String) document.getData().get("person_name"));
+                                        yourClass.setNumber((String) document.getData().get("person_number"));
+                                        yourClass.setAddress((String) document.getData().get("person_address"));
 
-                            ArrayList<Person> persons = new ArrayList<>();
-                            persons.add(p);
+                                        persons.add(yourClass);
 
-                            RecyclerView rv = findViewById(R.id.recyclerView);
-                            AdapterPerson adapter = new AdapterPerson(persons, R.layout.person_item);
-                            rv.setAdapter(adapter);
-                            LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-                            llm.setOrientation(LinearLayoutManager.VERTICAL);
-                            rv.setLayoutManager(llm);
 
-                        }
+                                    }
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error read document", e);
-                    }
-                });
+                                    RecyclerView rv = findViewById(R.id.recyclerView);
+                                    AdapterPerson adapter = new AdapterPerson(persons, R.layout.person_item);
+                                    rv.setAdapter(adapter);
+                                    LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+                                    llm.setOrientation(LinearLayoutManager.VERTICAL);
+                                    rv.setLayoutManager(llm);
+
+                                } else {
+                                    Log.w("TAG", "Error getting documents.", task.getException());
+                                }
+                            }
+                        });
+
 
             }
-
         });
 
-
-
-
-    /*
-    public void saveToFirebase(View v){
-
-        String personName = name.getText().toString();
-        String personNumber = number.getText().toString();
-        String personAddress = address.getText().toString();
-
-        // Create a new user with a first and last name
-        Map<String, Object> user = new HashMap<>();
-        user.put("person_name", personName);
-        user.put("person_number", personNumber);
-        user.put("person_address", personAddress);
-
-// Add a new document with a generated ID
-        db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error adding document", e);
-                    }
-                });
-    }
-     */
-
-//    public void readFromFirebase(View v){
-//
-//    }
 
     }
 }
